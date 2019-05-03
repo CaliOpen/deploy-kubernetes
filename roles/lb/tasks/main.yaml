@@ -35,3 +35,8 @@
     name: haproxy
     state: restarted
 
+- name: copy logrotate haproxy conf
+  copy:
+    src: logrotate-haproxy.conf
+    dest: /etc/logrotate.d/haproxy
+    mode: 0644

@@ -19,3 +19,23 @@
   apt:
     update_cache: yes
     upgrade: dist
+
+- name: Install dependencies
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+       - logrotate
+
+- name: copy syslog file
+  copy:
+    src: rsyslog.conf
+    dest: /etc/rsyslog.conf
+    mode: 0644
+  notify: restart rsyslog
+
+- name: copy logrotate syslog file
+  copy:
+    src: logrotate-rsyslog.conf
+    dest: /etc/logrotate.d/rsyslog
+    mode: 0644
