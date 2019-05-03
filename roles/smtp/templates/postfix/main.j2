@@ -9,7 +9,8 @@ mydomain = $myhostname
 myorigin = $myhostname
 mydestination = {{ postfix_mydestination | join(' ') }}
 smtpd_banner = $myhostname ESMTP $mail_name
-mynetworks = {{ postfix_mynetworks | join(' ') }}
+# mynetworks = {{ postfix_mynetworks | join(' ') }}
+mynetworks = 192.168.1.0/24    # TOFIX
 
 # TLS parameters
 ################
