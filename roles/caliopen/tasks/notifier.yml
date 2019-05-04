@@ -1,0 +1,19 @@
+- name: Ensures {{ caliopen_notifier_path }} dir exists
+  file: 
+    path: "{{ caliopen_notifier_path }}"
+    state: directory
+  tags: [notifier, config]
+
+- name: copy caliopen notifier files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ caliopen_notifier_path }}"
+    owner: "root"
+    mode: 0600
+  with_fileglob:
+    - "files/notifiers/*"
+  tags: [notifier, config]
+
+- name: create notifier templates configmap
+  shell: kubectl create configmap notifier-templates --from-file={{ caliopen_notifier_path }} -n {{ kube_namespace }}
+  tags: [notifier, config]

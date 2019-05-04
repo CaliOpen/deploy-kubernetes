@@ -5,6 +5,8 @@
 
 - include: configs.yml
 
+- include: notifier.yml
+
 - name: create go app deployments
   shell: kubectl apply -f {{ yaml_url }}/caliopen_services/{{ item }}.yaml -n {{ kube_namespace }}
   with_items:
