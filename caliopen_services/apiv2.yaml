@@ -38,6 +38,8 @@ spec:
           subPath: swagger.json
         - name: ca-certs
           mountPath: /etc/ssl/certs
+        - name: notifier-templates-volume
+          mounthPath: {{ caliopen_notifier_path }}
       volumes:
       - name: apiv2-conf-volume
         configMap:
@@ -51,6 +53,9 @@ spec:
           items:
           - key: swagger.json
             path: swagger.json
+      - name: notifier-templates-volume
+        configMap:
+          name: notifier-templates
       - name: ca-certs
         configMap:
           name: ca-certs
