@@ -52,7 +52,7 @@ ApiConfig:
   NotifierConfig:
     base_url: https://{{ caliopen_domain_name }}
     admin_username: admin
-    templates_path: "/etc/caliopen/notifiers/templates/"
+    templates_path: "{{ caliopen_notifier_path }}"
   Providers:                                                # temporary supported providers list for remote identities before moving this data into store facility
   - name: gmail
     protocol: email
