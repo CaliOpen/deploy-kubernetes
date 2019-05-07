@@ -1,6 +1,6 @@
-workers: 10
-twitter_app_key: {{ twitter_oauth_app_key }}
-twitter_app_secret: {{ twitter_oauth_app_secret }}
+workers: 10
+twitter_app_key: "{{ twitter_oauth_app_key }}"
+twitter_app_secret: "{{ twitter_oauth_app_secret }}"
 BrokerConfig:
   #messaging system
   nats_url: nats://{{ nats_host }}:4222
@@ -13,7 +13,7 @@ BrokerConfig:
   store_settings:
     hosts: # many allowed
 {% for host in groups['store'] %}
-      - {{ hostvars[host]['private_ips'] }}
+      - {{ hostvars[host]['private_ips'][0] }}
 {% endfor %}
     keyspace: {{ caliopen_cassandra_keyspace }}
     consistency_level: 1
@@ -39,7 +39,7 @@ BrokerConfig:
     index_settings:
       urls: # many allowed
 {% for host in groups['store'] %}
-      - http://{{ hostvars[host]['private_ips'] }}:9200
+      - http://{{ hostvars[host]['private_ips'][0] }}:9200
 {% endfor %}
     #messaging system
     in_topic: inboundTwitter
