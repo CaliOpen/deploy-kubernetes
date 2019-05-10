@@ -28,8 +28,14 @@
   ignore_errors: yes
   tags: config
 
+  # Configmap for frontend Env variables
 - name: create frontend configmap
-  shell: kubectl create configmap frontend-config --from-literal=api_hostname=api.{{ caliopen_domain_name }} --from-literal=api_protocol=https --from-literal=api_port=443 -n {{ kube_namespace }}
+  shell: >
+    kubectl create configmap frontend-config
+    --from-literal=api_hostname=api.{{ caliopen_domain_name }}
+    --from-literal=api_protocol=https --from-literal=api_port=443
+    --from-literal=webserver_hostname={{ caliopen_domain_name}}
+    -n {{ kube_namespace }}
   tags: config
 
 - name: create system configs

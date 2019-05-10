@@ -13,8 +13,6 @@ spec:
   template:
     metadata:
       labels:
-        type: frontend
-        tier: frontend
         app: frontend
     spec:
       affinity:
@@ -48,6 +46,11 @@ spec:
             configMapKeyRef:
               name: frontend-config
               key: api_port
+        - name: CALIOPEN_HOSTNAME
+          valueFrom:
+            configMapKeyRef:
+              key: webserver_hostname
+              name: frontend-config
       restartPolicy: Always
 
 ---
