@@ -31,44 +31,38 @@ filter {
 				overwrite => ["message"]
 				remove_field => ["_time"]
 			}
-
 		} else if [service] == "imap-worker" {
 			grok {
 				match => { "message" => "time=\"%{DATA:_time}\" level=%{WORD:level} msg=\"%{DATA:message}\""}
 				overwrite => ["message"]
 				remove_field => ["_time"]
 			}
-
 		} else if [service] == "mq-worker" {
 			grok {
 				match => { "message" => "%{WORD:level}:%{DATA:extra}:%{DATA:message}$"}
 				overwrite => ["message"]
 			}
-
 		} else if [service] == "identity-poller" {
 			grok {
 				match => { "message" => "time=\"%{DATA:_time}\" level=%{WORD:level} msg=\"%{DATA:message}\""}
 				overwrite => ["message"]
 				remove_field => ["_time"]
 			}
-
 		} else if [service] == "twitter-worker" {
 			grok {
 				match => { "message" => "time=\"%{DATA:_time}\" level=%{WORD:level} msg=\"%{DATA:message}\""}
 				overwrite => ["message"]
 				remove_field => ["_time"]
 			}
-
 		} else if [service] == "apiv1" {
 			grok {
 				match => { "message" => "\[%{DATA:req}\] %{IPV4:ip} \(\) \{%{DATA:vars}\} \[%{DATA:_time}\] %{WORD:http_req} %{DATA:req_path} %{DATA:rnd} generated %{NUMBER:bytes_generated} bytes in %{NUMBER:duration_ms} msecs \(HTTP/%{NUMBER:http_version} %{NUMBER:resp_code}\) %{DATA:rest}$"}
 				remove_field => ["_time","req","ip","vars","rnd","bytes_generated","http_version","rest", "message"]
 			}
 			grok {
-				match => { "message" => "%{WORD:level}:%{DATA:extra}:%{DATA:message}$"}
+				match => { "message" => "%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{DATA} %{WORD:level}%{SPACE}\[%{DATA:application}\]\[%{DATA:extra}\] %{DATA:message}$"}
 				overwrite => ["message"]
 			}
-
 		} else if [service] == "apiv2" {
 			grok {
 				match => { "message" => "%{DATA:_time} \| %{NUMBER:resp_code} \|[ ]*%{NUMBER:duration_ms}ms \|[ ]*%{IPV4:origin_ip} \| %{WORD:http_req}[ ]*%{DATA:req_path}$" }
@@ -79,32 +73,31 @@ filter {
 				overwrite => ["message"]
 				remove_field => ["_time"]
 			}
-
 		} else if [service] == "frontend" {
 			grok {
 				match => { "message" => "%{TIMESTAMP_ISO8601:_time} .{9}%{DATA:level}.{9} %{DATA:extra} - %{DATA:message}"}
 				overwrite => ["message"]
 				remove_field => ["_time"]
 			}
-
 		} else if [service] == "logstash"{
 			grok {
 				match => { "message" => "\[%{DATA:_time}\]\[%{WORD:level} \]\[%{DATA:extra}[ ]*\] %{DATA:message}$"}
 				overwrite => ["message"]
 				remove_field => ["_time"]
 			}
-
+		} else if [service] == "nginx-ingress" {
+			grok {
+				match => { "message" => "%{IP:origin_ip} - \[%{IP}\] -%{DATA}?- \[%{DATA:_time}\] \"%{WORD:http_req} %{DATA:req_path}\" %{NUMBER:resp_code} %{NUMBER:bytes_sent} \"%{DATA:http_referer}\" \"%{DATA:http_user_agent}\" %{NUMBER:request_length} %{NUMBER:request_time} \[%{DATA:backend}\] %{IP:backend_ip}:%{NUMBER:backend_port} %{NUMBER:backend_response_length} %{NUMBER:backend_response_time} %{NUMBER:backend_response_code} %{DATA:req_id}$" }
+				remove_field => ["_time","bytes_sent","http_referer", "http_user_agent", "request_length", "request_time", "backend_response_length", "backend_response_time", "req_id"]
+			}
+		} else {
+			drop {}
 		}
-
 		mutate {
 			rename => {"host" => "beats_host"}
 			remove_field => ["tags"]
 		}
-	} else {
-		drop {}
 	}
-
-
 }
 
 output {
