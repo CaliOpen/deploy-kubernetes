@@ -1,7 +1,7 @@
 ApiConfig:
   listen_interface: 0.0.0.0
   listen_port: 6544
-  hostname: https://api.{{ caliopen_domain_name }}
+  hostname: https://www.{{ caliopen_domain_name }}
   port: 443
   BackendConfig:
     backend_name: cassandra
@@ -50,7 +50,7 @@ ApiConfig:
     password: ""      #no password set
     db: 0             #use default db
   NotifierConfig:
-    base_url: https://{{ caliopen_domain_name }}
+    base_url: https://www.{{ caliopen_domain_name }}
     admin_username: admin
     templates_path: "{{ caliopen_notifier_path }}"
   Providers:                                                # temporary supported providers list for remote identities before moving this data into store facility
