@@ -39,7 +39,7 @@ spec:
         - name: ca-certs
           mountPath: /etc/ssl/certs
         - name: notifier-templates-volume
-          mounthPath: {{ caliopen_notifier_path }}
+          mountPath: /etc/caliopen/notifiers/templates
       volumes:
       - name: apiv2-conf-volume
         configMap:
