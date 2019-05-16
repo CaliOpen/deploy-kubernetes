@@ -54,13 +54,6 @@ ApiConfig:
     admin_username: admin
     templates_path: "{{ caliopen_notifier_path }}"
   Providers:                                                # temporary supported providers list for remote identities before moving this data into store facility
-  - name: gmail
-    protocol: email
-    infos:
-      client_id: {{ gmail_oauth_app_key }}
-      client_secret: {{ gmail_oauth_app_secret }}
-      imapserver: imap.gmail.com:993
-      smtpserver: smtp.gmail.com:587
   - name: twitter
     protocol: twitter
     infos:
