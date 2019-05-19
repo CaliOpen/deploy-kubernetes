@@ -36,6 +36,7 @@ ApiConfig:
 {% endfor %}
   NatsConfig:
     url: nats://{{ nats_host }}:4222
+    nats_queue: notifierQueue
     outSMTP_topic: outboundSMTP     # topic's name to post "send" draft order
     outIMAP_topic: outboundIMAP     # topic's name for "send" draft order via remote SMTP+IMAP
     outTWITTER_topic: twitter_dm    # topics's name for "send" draft order via TWITTER
