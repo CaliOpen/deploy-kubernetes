@@ -27,7 +27,7 @@ spec:
       containers:
       - image: public-registry.caliopen.org/caliopen_imap_worker
         imagePullPolicy: Always
-        name: identity-worker
+        name: imap-worker
         volumeMounts:
         - name: imapworker-conf-volume
           mountPath: /etc/caliopen/imapworker.yaml
