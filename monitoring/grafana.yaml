@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  ports:
+    - port: 3000
+      protocol: TCP
+  selector:
+    app: grafana
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: monitoring
+  labels:
+    app: grafana
+spec:
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: grafana/grafana
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+          - mountPath: /var/lib/grafana
+            name: data
+          - mountPath: /etc/grafana
+            name: grafana-config
+          - mountPath: /etc/grafana/provisioning/dashboards
+            name: dashboards-import
+          - mountPath: /etc/grafana/provisioning/datasources
+            name: datasources
+          - mountPath: /var/lib/grafana/dashboards
+            name: dashboards
+        env:
+          - name: GRAFANA_OAUTH_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: grafana-auth
+                key: GRAFANA_OAUTH_CLIENT_ID
+          - name: GRAFANA_OAUTH_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: grafana-auth
+                key: GRAFANA_OAUTH_CLIENT_ID
+          - name: GRAFANA_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: grafana-auth
+                key: GRAFANA_ADMIN_PASSWORD
+          - name: GRAFANA_ADMIN_USER
+            valueFrom:
+              secretKeyRef:
+                name: grafana-auth
+                key: GRAFANA_ADMIN_USER
+      restartPolicy: Always
+      volumes:
+      - name: grafana-config
+        configMap:
+          name: grafana-config
+          items:
+          - key: grafana.ini
+            path: grafana.ini
+      - name: dashboards-import
+        configMap:
+          name: grafana-config
+          items:
+          - key: grafana-dashboards.yaml
+            path: grafana-dashboards.yaml
+      - name: datasources 
+        configMap:
+          name: grafana-config
+          items:
+          - key: grafana-datasources.yaml
+            path: grafana-datasources.yaml
+      - emptyDir: {}
+        name: data
+      - name: dashboards
+        configMap:
+          name: grafana-dashboards

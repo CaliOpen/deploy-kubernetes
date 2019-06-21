@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  namespace: monitoring
+data:
+  grafana.ini: |
+    app_mode = production
+    instance_name = Caliopen_Grafana
+
+    [paths]
+    data = /var/lib/grafana
+    logs = /var/log/grafana
+    ;temp_data_lifetime = 24h
+
+    [server]
+    # The full public facing url you use in browser, used for redirects and emails
+    # If you use reverse proxy and sub path specify full url (with sub path)
+    root_url = https://grafana.monitor.caliopen.org
+
+    [security]
+    admin_user = ## XXX: Set to wanted username
+    admin_password = ${GRAFANA_ADMIN_PASSWORD}
+    cookie_secure = true
+
+    [auth]
+    [auth.github]
+    enabled = true
+    allow_sign_up = false
+    # Read from environment variable
+    client_id = ${GRAFANA_OAUTH_CLIENT_ID}
+    client_secret = ${GRAFANA_OAUTH_CLIENT_SECRET}
+    scopes = user:email,read:org
+    auth_url = https://github.com/login/oauth/authorize
+    token_url = https://github.com/login/oauth/access_token
+    api_url = https://api.github.com/user
+    ;team_ids = 728950
+    allowed_organizations = CaliOpen
+
+  grafana-dashboards.yaml: |
+    apiVersion: 1
+    providers:
+      # <string> provider name
+    - name: 'Caliopen-dashboards'
+      # <string, required> name of the dashboard folder. Required
+      folder: ''
+      # <string, required> provider type. Required
+      type: file
+      # <bool> disable dashboard deletion
+      disableDeletion: false
+      # <bool> enable dashboard editing
+      editable: true
+      # <int> how often Grafana will scan for changed dashboards
+      updateIntervalSeconds: 120
+      options:
+        # <string, required> path to dashboard files on disk. Required
+        path: /var/lib/grafana/dashboards
+  
+  grafana-datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      # <string, required> name of the datasource. Required
+    - name: K8s-cluster
+      # <string, required> datasource type. Required
+      type: prometheus
+      # <string, required> access mode. proxy or direct (Server or Browser in the UI). Required
+      access: proxy
+      # <string> url
+      url: http://prometheus:9090
+      # <bool> enable/disable basic auth
+      basicAuth: false
+      isDefault: true
+      version: 1
+      # <bool> allow users to edit datasources from the UI.
+      editable: true
+
