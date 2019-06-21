@@ -1,0 +1,16 @@
+## Dashboard only supports being deployed in kube-system
+## so we need an ingress for that namespace
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  annotations:
+    kubernetes.io/ingress.class: "external"
+spec:
+  rules:
+  - host: dashboard.monitor.caliopen.org
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes-dashboard
+          servicePort: 80
