@@ -25,7 +25,7 @@ spec:
                 - internal
       terminationGracePeriodSeconds: 180
       containers:
-      - image: public-registry.caliopen.org/caliopen_identity_poller
+      - image: public-registry.caliopen.org/caliopen_identitypoller
         imagePullPolicy: Always
         name: identity-poller
         volumeMounts:

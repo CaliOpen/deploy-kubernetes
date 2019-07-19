@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: imap-worker
+  name: mastodon-worker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: imap-worker
+      app: mastodon-worker
   template:
     metadata:
       labels:
-        type: imap-worker
-        tier: remote-identities
-        app: imap-worker
+        type: mastodon-worker
+        tier: worker
+        app: mastodon-worker
     spec:
       affinity:
         nodeAffinity:
@@ -25,22 +25,22 @@ spec:
                 - internal
       terminationGracePeriodSeconds: 180
       containers:
-      - image: public-registry.caliopen.org/caliopen_imapworker
+      - image: public-registry.caliopen.org/caliopen_mastodonworker
         imagePullPolicy: Always
-        name: imap-worker
+        name: mastodon-worker
         volumeMounts:
-        - name: imapworker-conf-volume
-          mountPath: /etc/caliopen/imapworker.yaml
-          subPath: imapworker.yaml
+        - name: mastodonworker-conf-volume
+          mountPath: /etc/caliopen/mastodonworker.yaml
+          subPath: mastodonworker.yaml
         - name: ca-certs
           mountPath: /etc/ssl/certs
       volumes:
-      - name: imapworker-conf-volume
+      - name: mastodonworker-conf-volume
         configMap:
-          name: imapworker-config
+          name: mastodonworker-config
           items:
-          - key: imapworker.yaml
-            path: imapworker.yaml
+          - key: mastodonworker.yaml
+            path: mastodonworker.yaml
       - name: ca-certs
         configMap:
           name: ca-certs
