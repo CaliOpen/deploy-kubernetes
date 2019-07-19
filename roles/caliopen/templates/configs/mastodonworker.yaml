@@ -1,0 +1,45 @@
+workers: 10
+BrokerConfig:
+  #messaging system
+  nats_url: nats://{{ nats_host }}:4222
+  nats_queue: Mastodonworkers                              # NATS group queue for workers
+  nats_topic_poller: mastodonJobs                          # NATS topic on which to request job from idpoller
+  nats_topic_poller_cache: idCache                         # NATS topic to send orders to idpoller regarding identities management
+  nats_topic_direct_message: mastodon_dm                   # NATS topic to listen to orders for handling DMs (fetch, send)
+  #storage facility
+  store_name: cassandra                                    # backend to store raw emails and messages (inbound & outbound)
+  store_settings:
+    hosts: # many allowed
+{% for host in groups['store'] %}
+      - {{ hostvars[host]['private_ips'][0] }}
+{% endfor %}
+    keyspace: {{ caliopen_cassandra_keyspace }}
+    consistency_level: 1
+    raw_size_limit: 1048576                                # max size in bytes for objects in db. Use S3 interface if larger.
+    object_store_settings:
+      endpoint: {{ object_store_host }}:9000
+      access_key: {{ object_store_access_key }}
+      secret_key: {{ object_store_secret_key }}
+      location: eu-fr-paris                                # S3 region.
+      buckets:
+        raw_messages: {{ caliopen_bucket_raw_message }}                # bucket name to put raw messages to
+        temporary_attachments: {{ caliopen_bucket_tmp_attachment }}    # bucket name to store draft attachments
+    use_vault: true
+    vault_settings:
+      url: https://{{ vault_host }}:{{ vault_port }}
+      username: {{ vault_worker_username }}
+      password: {{ vault_worker_password }}
+  LDAConfig:
+    broker_type: mastodon                                  # types are : smtp, imap, mailboxe, etc.
+    #index facility
+    index_name: elasticsearch                              # backend to index messages (inbound & outbound)
+    index_settings:
+      urls: # many allowed
+{% for host in groups['store'] %}
+      - http://{{ hostvars[host]['private_ips'][0] }}:9200
+{% endfor %}
+    #messaging system
+    in_topic: inboundMastodon
+    # notifications
+    NotifierConfig:
+      admin_username: admin                                # username on whose behalf notifiers will act. This admin user must have been created before by other means.

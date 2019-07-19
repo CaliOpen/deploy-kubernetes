@@ -15,6 +15,7 @@
     - identity-poller
     - imap-worker
     - twitter-worker
+    - mastodon-worker
   tags: [ go, deployment ]
 
 - name: create python app deployments

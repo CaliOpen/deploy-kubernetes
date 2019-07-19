@@ -25,6 +25,7 @@
     - { name: "lmtp", ext: "yaml"}
     - { name: "swagger", ext: "json"}
     - { name: "twitterworker", ext: "yaml"}
+    - { name: "mastodonworker", ext: "yaml"}
   ignore_errors: yes
   tags: config
 
